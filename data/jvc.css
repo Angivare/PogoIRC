@@ -1,0 +1,13 @@
+#jv-header, #jv-footer, #zone-sponso, #prospect, .show-pub,
+#jv-feedback, #cookies_notifier, #bloc-formulaire-forum, #forum-right-col,
+#page-topics .row:first-of-type {
+	display: none !important;
+} #content, .container {
+	min-width: 0 !important;
+	background-image: initial !important;
+	background-color: #f5f5f5 !important;
+} .container, #forum-main-col {
+	width: 100% !important;
+} #content-forum .titre-head-bloc, #content-forum .conteneur-topic-pagi {
+	border: 0 !important;
+}

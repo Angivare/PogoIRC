@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<style>
+		body {
+			background: #fbfbfb;
+			font-family: "arial";
+			font-size: 12px;
+			line-height: 20px;
+			color: #333;
+		}
+		::-webkit-scrollbar {
+			width: 5px;
+			height: 5px;
+		} ::-webkit-scrollbar-track {
+			background: #fbfbfb;
+		} ::-webkit-scrollbar-thumb {
+			background: #555;
+		}
+
+		#app-contents {
+			margin-top: 26px;
+		}
+
+		#header {
+			position: fixed;
+			top: 0;
+			right: 0;
+			left: 0;
+			height: 24px;
+			vertical-align: middle;
+			line-height: 24px;
+			padding-right: 6px;
+			z-index: 999;
+
+			background: #fbfbfb;
+			border-bottom: red;
+		} #connected, #mp {
+			float: right;
+		} #mp {
+			text-decoration: none;
+			color: inherit;
+			margin-right: 6px;
+		} #forumButt, #topicButt {
+			display: inline-block;
+			background: #999;
+			width: 16px; height: 16px;
+			margin-left: 6px;
+			margin-top: 4px;
+			float: right;
+
+			text-align: center;
+			line-height: 16px;
+			color: #f0f0f0;
+			text-decoration: none;
+			font-weight: bold;
+		}
+
+		.break { clear: both; }
+
+		.whole {
+			margin: 9px 0;
+		} .header {
+			color: black;
+		} .left {
+			overflow: hidden;
+			margin-left: 38px;
+		} .right {
+			float: right;
+			text-align: right;
+		} .quote {
+			float: right;
+			cursor: pointer;
+			width: 16px; height: 16px;
+			margin-left: 6px;
+			background: url("http://www.jeuxvideo.com/skin/skin-jv/img/forum/icones-messages.png") -20px 0 no-repeat;
+		}
+
+		.content {
+			position: relative;
+		} .col-avatar {
+			display: block;
+			float: left;
+			text-align: right;
+			width: 34px;
+			height: 34px;
+			overflow: hidden;
+			vertical-align: middle;
+			margin-top: 3px;
+		} .col-avatar>img {
+			max-width: 32px;
+			max-height: 32px;
+		} .col-msg {
+			overflow: hidden;
+			border: 1px solid #aaa;
+			border-radius: 5px;
+			box-shadow: 0 0 2px #eee;
+			background: white;
+			padding: 9px;
+			margin-left: 38px;
+			margin-right: -36px;
+
+			line-height: 18px;
+		}
+		.app-post0 .col-msg {
+			background-color: #F5FAFF;
+		}
+
+		.not-edited {
+			display: none;
+		} .nick {
+			font-size: 14px;
+			font-weight: 600;
+			text-decoration: none;
+			color: black;
+		} 
+		.self {
+			color: #39407F;
+		} .modo {
+			color: #fa6600
+		}
+		.admin {
+			color: red;
+		}
+
+		p {
+			margin: 0 0 10px; padding: 0;
+		} p:last-of-type {
+			margin: 0;
+		} a {
+			color: #6673E5;
+		}
+
+		.bloc-spoil-jv {
+		} .bloc-spoil-jv, .bloc-spoil-jv * {
+			background: #222;
+			color: #222;
+		} .bloc-spoil-jv {
+			color: #222;
+		} .contenu-spoil img {
+			visibility: hidden;
+		} .bloc-spoil-jv:hover, .bloc-spoil-jv:hover * {
+			color: inherit;
+			background: rgba(0,0,0,0);
+			visibility: visible;
+		}
+
+		.blockquote-jv {
+			border-left: 5px solid #39407F;
+			color: #6b6b6b;
+			margin-left: 10px;
+			padding: 0 10px;
+		}
+		</style>
+		<script type="text/javascript" src="$DIR$/data/common.js"></script>
+		<script>
+			/* Attention: les scripts sont chargés lors
+			de la création d'une nouvelle conversation
+			mais aussi à chaque fois qu'un nouveau post
+			est détecté: créez vos scripts en prenant en
+			compte le fait qu'ils seront appelés fréquemment*/
+			function onNewPost() { 	//Cette fonction est automatiquement appelée
+									//lorsqu'un nouveau message est posté.
+			}
+			function quote(id, head) {
+				elems = document.getElementsByClassName("post-"+id);
+				str = elems[elems.length - 1].innerHTML;
+				str = head + "<br>" + str;
+
+				g_state.quote(str);
+			}
+			function refresh(forum, topic, page, type, connected, mp) {
+				fButt = document.getElementById("forumButt");
+				tButt = document.getElementById("topicButt");
+
+				fButt.href = "pogo://www.jeuxvideo.com/forums/0-" + forum + "-0-1-0-1-0-0.htm";
+				tButt.href = "http://www.jeuxvideo.com/forums/" + type + "-" + forum + "-" + topic + "-" + page + "-0-1-0-0.htm";
+
+				cElem = document.getElementById("connected");
+				cElem.innerHTML = connected + " connecté(s)";
+
+				mElem = document.getElementById("mp");
+				mElem.innerHTML = mp + " messages privés,";
+				if(mp > 0)
+					mElem.fontWeight = "bold";
+				else
+					mElem.fontWeight = "inherit";
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="header">
+			<a id="forumButt">F</a>
+			<a id="topicButt">T</a>
+			<span id="connected"></span>
+			<a id="mp" href="http://www.jeuxvideo.com/messages-prives/boite-reception.php"></a>
+		</div>
+		<div class="break"></div>
+		<div id="app-contents">

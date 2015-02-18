@@ -1,0 +1,116 @@
+/* Fenêtre principale */
+MainWindow {
+	background: #fbfbfb;
+}
+/* Fenêtres pop-up */
+QDialog {
+	background: #fbfbfb;
+} QLabel {
+	color: #333;
+}
+/* Scrollbars générales */
+QScrollBar:vertical {
+	background: white;
+	width: 5px;
+}
+QScrollBar::handle:vertical {
+	background: #555;
+	min-height: 20px;
+}
+QScrollBar:horizontal {
+	background: white;
+	height: 5px;
+}
+QScrollBar::handle:horizontal {
+	background: white;
+	min-width: 20px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+	background: white;
+}
+/* Barre de statut (en bas) */
+QStatusBar::item { /* Élément du menu (copyright) */
+	border: none;
+}
+/* Menu (en haut) */
+QMenuBar { /* Barre du menu (celle visible sans cliquer) */
+} QMenuBar::item { /* Différents menus (fichier, fenêtres, ..) */
+} QMenuBar::item::selected {
+} QMenu { /* Le menu en lui-même, une fois  cliqué sur le menu */
+} QMenu::item::selected {
+}
+/* Zone de texte
+	utilisez max-height pour la hauteur */
+QTextEdit {
+	border: 1px solid #aaa;
+	margin-right: 7px;
+	margin-left: 4px;
+	margin-top: 3px;
+} QTextEdit[class="editing"] {
+	background: #fffff0;
+} QTextEdit[class="not-editing"] {
+	background: white;
+}
+QTextEdit:focus {
+}
+/* Liste de pseudos/mots de passes */
+QListWidget {
+}
+/* Tous les docks: les listes de pseudos
+ */
+QDockWidget::title { /* Barre de titre */
+	background: #fbfbfb;
+	text-align: center;
+	vertical-align: middle;
+}
+QListWidget {
+	border: none;
+	border-right: 1px solid #aaa;
+}
+QTabWidget::pane {
+	background: #fbfbfb;
+	border: none;
+	border-top: 1px solid #aaa;
+	margin-bottom: 6px;
+} QTabWidget::tab-bar {
+} QTabBar {
+} QTabBar::tab {
+	background: #f0f0f0;
+	border-right: 1px solid #aaa;
+	padding: 3px;
+} QTabBar::tab::first {
+	border-left: 1px solid #aaa;
+} QTabBar::tab:selected, QTabBar::tab:hover {
+	background: white;
+} QTabBar::tab:selected {
+}
+/* Balises */
+#tagBold, #tagItalic, #tagUnderline, #tagCrossed, 
+#tagList, #tagNumberedList, #tagQuote, #tagCode, #tagSpoil {
+	cursor: pointer;
+	background: #f0f0f0;
+	padding: 5px;
+	min-width: 1em;
+
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+} #tagBold {
+	margin-left: 8px;
+	border-left: 1px solid #aaa;
+} #tagSpoil {
+	border-right: 1px solid #aaa;
+}
+#tagBold:hover, #tagItalic:hover, #tagUnderline:hover,
+#tagCrossed:hover, #tagList:hover, #tagNumberedList:hover,
+#tagQuote:hover, #tagCode:hover, #tagSpoil:hover {
+	background: white;
+}
+/* Console */
+#LogWnd QPlainTextEdit {
+	color: #333;
+	font-family: "lucida console", monospace;
+	font-size: 10pt;
+}

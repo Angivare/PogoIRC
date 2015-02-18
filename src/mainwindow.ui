@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1016</width>
+    <height>572</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="mainWidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>911</width>
+      <height>511</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="layoutMain">
+     <item>
+      <widget class="QWidget" name="tags" native="true">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="layoutBot">
+       <item>
+        <widget class="QPushButton" name="buttonSend">
+         <property name="text">
+          <string>Envoyer</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>10</y>
+      <width>909</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="layoutTags">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="tagBold">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>B</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagItalic">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>I</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagUnderline">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>U</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagCrossed">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>S</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagList">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagNumberedList">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>#</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagQuote">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>&quot; &quot;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagCode">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>&lt; &gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="tagSpoil">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>Spoil</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menu">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1016</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuNotifications">
+     <property name="title">
+      <string>Notifications</string>
+     </property>
+     <addaction name="actionEnableSound"/>
+     <addaction name="actionEnableAlert"/>
+    </widget>
+    <addaction name="actionNewNick"/>
+    <addaction name="actionNewPass"/>
+    <addaction name="actionChangeTopicViewUrl"/>
+    <addaction name="actionChangeForumViewUrl"/>
+    <addaction name="separator"/>
+    <addaction name="menuNotifications"/>
+    <addaction name="separator"/>
+    <addaction name="actionUpdate"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Fenêtre</string>
+    </property>
+    <widget class="QMenu" name="menuTopics">
+     <property name="title">
+      <string>Topics</string>
+     </property>
+     <addaction name="actionNewTopicView"/>
+     <addaction name="actionReload"/>
+    </widget>
+    <widget class="QMenu" name="menuForums">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Forums</string>
+     </property>
+     <addaction name="actionNewForumView"/>
+     <addaction name="actionForumReload"/>
+    </widget>
+    <widget class="QMenu" name="menuCredentials">
+     <property name="title">
+      <string>Données de connexion</string>
+     </property>
+     <addaction name="actionShowDockNick"/>
+     <addaction name="actionShowNick"/>
+     <addaction name="actionShowPass"/>
+    </widget>
+    <addaction name="menuTopics"/>
+    <addaction name="menuForums"/>
+    <addaction name="menuCredentials"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowTags"/>
+    <addaction name="actionShowSend"/>
+    <addaction name="actionShowConsole"/>
+   </widget>
+   <widget class="QMenu" name="menuFav">
+    <property name="title">
+     <string>Favoris</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuThemes">
+    <property name="title">
+     <string>Thèmes</string>
+    </property>
+    <widget class="QMenu" name="menuLoad">
+     <property name="title">
+      <string>Charger</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="menuLoad"/>
+    <addaction name="actionThemeRefresh"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuWindows"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuFav"/>
+   <addaction name="menuThemes"/>
+  </widget>
+  <widget class="QStatusBar" name="status"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quitter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionChanger_de_pseudo">
+   <property name="text">
+    <string>Changer de pseudo</string>
+   </property>
+  </action>
+  <action name="actionNewTopicView_3">
+   <property name="text">
+    <string>Nouvelle conversation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionShowNick_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Liste des pseudos</string>
+   </property>
+  </action>
+  <action name="actionChangeTopicViewUrl">
+   <property name="text">
+    <string>Changer l'URL du topic actuel</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
+   </property>
+  </action>
+  <action name="actionNewNick">
+   <property name="text">
+    <string>Nouveau pseudo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionNewPass">
+   <property name="text">
+    <string>Nouveau mot de passe</string>
+   </property>
+  </action>
+  <action name="actionShowPass_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Liste des mots de passe</string>
+   </property>
+  </action>
+  <action name="actionShowSend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Afficher bouton envoyer</string>
+   </property>
+  </action>
+  <action name="actionShowDockNick_3">
+   <property name="text">
+    <string>Afficher/réduire le dock des pseudos</string>
+   </property>
+  </action>
+  <action name="actionReload_3">
+   <property name="text">
+    <string>Réactualiser le topic</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionFavLoad">
+   <property name="text">
+    <string>Charger</string>
+   </property>
+  </action>
+  <action name="actionFavSave">
+   <property name="text">
+    <string>Sauvegarder</string>
+   </property>
+  </action>
+  <action name="actionShowTags">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Afficher liste des balises</string>
+   </property>
+  </action>
+  <action name="actionThemeRefresh">
+   <property name="text">
+    <string>Rafraîchir la liste</string>
+   </property>
+  </action>
+  <action name="actionChangeVars">
+   <property name="text">
+    <string>Modifier la liste des ignorés/pseudos coloriés</string>
+   </property>
+  </action>
+  <action name="actionShowConsole">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Afficher/cacher console</string>
+   </property>
+  </action>
+  <action name="actionEnableSound_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Son de notification</string>
+   </property>
+  </action>
+  <action name="actionEnableAlert_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Alerte de notification</string>
+   </property>
+  </action>
+  <action name="actionNewForumView_3">
+   <property name="text">
+    <string>Nouvelle liste de topics</string>
+   </property>
+  </action>
+  <action name="actionChangeForumViewUrl">
+   <property name="text">
+    <string>Changer l'URL du forum actuel</string>
+   </property>
+  </action>
+  <action name="actionForumReload_2">
+   <property name="text">
+    <string>Réactualiser les forums</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionListe_des_ignor_s">
+   <property name="text">
+    <string>Liste des ignorés</string>
+   </property>
+  </action>
+  <action name="actionupdate2">
+   <property name="text">
+    <string>Mettre à jour</string>
+   </property>
+  </action>
+  <action name="actionNewTopicView">
+   <property name="text">
+    <string>Nouveau topic</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionNewForumView">
+   <property name="text">
+    <string>Nouveau forum</string>
+   </property>
+  </action>
+  <action name="actionReload">
+   <property name="text">
+    <string>Rafraichir le topic</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionForumReload">
+   <property name="text">
+    <string>Rafraîchir les forums</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionShowNick">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Afficher pseudos</string>
+   </property>
+  </action>
+  <action name="actionShowPass">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Afficher mots de passe</string>
+   </property>
+  </action>
+  <action name="actionShowDockNick">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Afficher/cacher données de connexion</string>
+   </property>
+  </action>
+  <action name="actionEnableSound">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Son de notification</string>
+   </property>
+  </action>
+  <action name="actionEnableAlert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Alerte de notification</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Mettre à jour</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>À propos</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
