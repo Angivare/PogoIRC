@@ -34,7 +34,6 @@ HEADERS  += mainwindow.h \
     forumview.h \
     data_structs.h \
     parser.h \
-    defines.h \
     spellchecker.h \
     textedit.h
 

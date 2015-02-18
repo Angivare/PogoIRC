@@ -24,7 +24,6 @@
 #include <QBuffer>
 #include <QProcess>
 
-#include "defines.h"
 #include "parser.h"
 #include "topicview.h"
 #include "forumview.h"

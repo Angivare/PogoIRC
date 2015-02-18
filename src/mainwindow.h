@@ -15,7 +15,6 @@
 #include <QRegExp>
 #include <QTextDocument>
 
-#include "defines.h"
 #include "data_structs.h"
 #include "config.h"
 #include "docknick.h"

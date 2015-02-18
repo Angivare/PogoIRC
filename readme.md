@@ -1,4 +1,4 @@
-PogoIRC, le logiciel permettant d'afficher un topic de JVC en live.
+Repose sur la version __4.8.1__ de Qt (et non pas la 5.x)
 
 Les fichiers dans ./data/ sont fournis tels quels à l'utilisateur(ils ne nécessitent aucune compilation, ou autre).
 Le dossier contient différentes ressources: les thèmes chargés par la QWebView, le script se chargeant de l'ajout de messages, et les dictionnaires de correction orthographique.
@@ -18,4 +18,4 @@ Si vous voulez ajouter du code spécifique à une plateforme (un fix pour que le
 #endif
 ```
 
-Et veuillez S.V.P utilisez des _tabulations_ plutôt que des _espaces_
+Et veuillez S.V.P utiliser des _tabulations_ plutôt que des _espaces_

@@ -3,17 +3,13 @@ window.onload = function() {
 };
 
 function docHeight() {
-	var body = document.body,
-	html = document.documentElement;
-	
-	return Math.max(body.scrollHeight, body.offsetHeight, 
-					html.clientHeight, html.scrollHeight, html.offsetHeight);
+	var body = document.body.scrollHeight;
+	return body;
 }
 
 function scrollHeight() {
-	var doc = document.documentElement;
-	var top = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-	var viewport = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	var top = document.body.scrollTop;
+	var viewport = window.innerHeight;
 	return top + viewport;
 }
 
@@ -30,10 +26,6 @@ function scroll(scrollBefore, heightBefore, heightAfter) {
 	if(scrollBefore >= heightBefore)
 	{	//scroll to bot
 		window.scrollTo(0, heightAfter);
-	}
-	else
-	{
-		window.scrollTo(0, scrollBefore);
 	}
 }
 
