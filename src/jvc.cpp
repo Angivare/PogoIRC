@@ -299,9 +299,14 @@ void Jvc::prepareForm1(int i, Response* reply)
 		m_prepare[i].form.tk += "&fs_signature=" + m_prepare[i].form.sign;
 	} else m_prepare[i].form.sign = "";
 	
-	(*m_prepare[i].topicView)->setForm(m_prepare[i].form);
+	if(*m_prepare[i].topicView)
+		(*m_prepare[i].topicView)->setForm(m_prepare[i].form);
+	else {
+		delete m_prepare[i].topicView;
+		m_prepare[i].topicView = NULL;
+	}
 	
-	if(m_prepare[i].msg != QString())
+	if(m_prepare[i].msg != QString() && m_prepare[i].topicView)
 	{	//Post new msg
 		postMsgFromForm(m_prepare[i].msg, m_prepare[i].topicView);
 	}
@@ -356,13 +361,6 @@ void Jvc::postMsg(QString msg, TopicViewH* toPost, bool init, int fromIndex) {
 	else
 		index = fromIndex;
 
-/*	m_req.setUrl(QUrl(m_post[index].url));
-	
-	m_rep.push_back(new Response(m_http->get(m_req), index));
-	
-	QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(postMsg1(int,Response*)));
-	connectErr();
-*/	
 	if(!(*m_post[index].topicView)->isFormReady()) {
 		d << "Formulaire non chargé, réessayez dans quelques secondes.";
 		return;
@@ -392,70 +390,8 @@ void Jvc::postMsg(QString msg, TopicViewH* toPost, bool init, int fromIndex) {
 	QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(postMsg3(int,Response*)));
 	connectErr();
 }
-void Jvc::postMsg1(int,Response*){}
-void Jvc::postMsg2(int,Response*){}
-/*void Jvc::postMsg1(int i, Response* reply) {
-	d.silent("postMsg1 " + QString::number(i));
-	if(m_connecting) {
-		d << "Envoi de message annulé";
-		m_post.erase(m_post.find(i));
-		m_rep.removeOne(reply);
-		reply->deleteLater();
-		return;
-	}
-	Timer *timer = new Timer(new QTimer(), reply, i);
-	QObject::connect(timer, SIGNAL(timeout(int,Response*)), this, SLOT(postMsg2(int,Response*)));
-	QObject::connect(timer, SIGNAL(timeout(int,Response*)), timer, SLOT(deleteLater()));
-	timer->getTimer()->start(OFFSET);
-}
-
-void Jvc::postMsg2(int i, Response* reply) {
-	d.silent("postMsg2 " + QString::number(i));
-	if(m_connecting) {
-		d << "Envoi de message annulé";
-		m_post.erase(m_post.find(i));
-		m_rep.removeOne(reply);
-		reply->deleteLater();
-		return;
-	}
-	
-	QString page; 
-	while(reply->getRep()->bytesAvailable())
-		page += QString::fromUtf8(reply->getRep()->readLine());//Read page
-	
-	QString tk = getTk(page);
-	
-	m_req.setUrl(QUrl(m_post[i].url));
-	
-	QByteArray data; data += tk;
-	data += "&message_topic=" + QUrl::toPercentEncoding(m_post[i].msg);
-	data += "&form_alias_rang=" + QString("1");
-	if(-1 != page.indexOf(" name=\"fs_signature\" ")) {
-		//Captcha
-		int n(0);
-		const QString sign = getFieldVal(page, "fs_signature", n);
-		data += "&fs_signature=" + sign;
-		
-		m_post[i].tk = data;
-		m_req.setUrl(QUrl("http://www.jeuxvideo.com/captcha/ccode.php?" + sign));
-		m_rep.push_back(new Response(m_http->post(m_req, data), i));
-		
-		QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(postMsgCaptcha(int,Response*)));
-		connectErr();
-		
-		m_rep.removeOne(reply);
-		reply->deleteLater();
-		return;
-	}
-	
-	m_rep.push_back(new Response(m_http->post(m_req, data), i));
-	
-	QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(postMsg3(int,Response*)));
-	connectErr();
-	
-	m_rep.removeOne(reply);
-	reply->deleteLater();
-}*/
+void Jvc::postMsg1(int,Response*){} //unused
+void Jvc::postMsg2(int,Response*){} //unused
 void Jvc::postMsg3(int i, Response* reply) {
 	d.silent("postMsg3 " + QString::number(i));
 	QString page; 
@@ -590,8 +526,6 @@ void Jvc::editMsg3(int i, Response* reply) {
 	
 	QByteArray data; data += tk;
 	data += "&" + m_edit[i].tk;
-//	data += "&fs_signature=" + sign;
-//	data += "&fs_ccode=";
 	data += "&id_message=" + QString::number(m_edit[i].id);
 	data += "&message_topic=" + QUrl::toPercentEncoding(m_edit[i].msg);
 	data += "&action=post";
@@ -801,7 +735,7 @@ void Jvc::getMsgTimeout(int i) {
 }
 
 /* --------------------
-   GET TOPIC CALLCHAIN
+   GET TOPIC CALLCHAIN (UNUSED)
   -----------------*/
 void Jvc::getTopic(QString url, ForumViewH* forumView) {
 	if(m_connecting) return;
@@ -813,7 +747,6 @@ void Jvc::getTopic(QString url, ForumViewH* forumView) {
 	else						index = m_forumView.begin().key() - 1;
 	m_forumView[index] = forumView;
 	
-//	m_req.setUrl(QUrl(getTopicLastMsg(url)));
 	m_req.setUrl(QUrl(getForumFirstPage(url)));
 	
 	m_rep.push_back(new Response(m_http->get(m_req), index));
