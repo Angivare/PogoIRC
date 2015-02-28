@@ -2,7 +2,7 @@
 
 TextEdit::TextEdit(QWidget *parent) :
 QTextEdit(parent), _marked(false),
-_sep(Config().get("dicts/sep", "(\\s+)|,|:|;|\\?|!|/|\\\\|\\(|\\)|\\[|\\]|\\{|\\}").toString())
+_sep(Config().get("dicts/sep", "[(\\s+),:;\\?!/\\\\\\(\\)\\[\\]\\{\\}\\\"]").toString())
 {
 	_wrong.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 	_wrong.setUnderlineColor(QColor(255,0,0));
@@ -29,13 +29,17 @@ void TextEdit::createContextMenu(QPoint pt) {
 	QString w = tc.selectedText();
 	QStringList suggestions = _sc.suggest(w);
 	
-	menu->addSeparator();
+	QAction* before = menu->actions()[0];
 	for(int i = 0; i < suggestions.size(); i++) {
 		QAction* act = new QAction(suggestions[i], menu);
+		QFont f = act->font();
+		f.setBold(true);
+		act->setFont(f);
 		act->setData(pt);
-		menu->addAction(act);
+		menu->insertAction(before, act);
 		connect(act, SIGNAL(triggered()), this, SLOT(correct()));
 	}
+	menu->insertSeparator(before);
 		
 	menu->popup(this->mapToGlobal(pt));
 	connect(menu, SIGNAL(aboutToHide()), menu, SLOT(deleteLater()));
@@ -48,6 +52,8 @@ void TextEdit::correct() {
 		QTextCursor tc = this->cursorForPosition(act->data().toPoint());
 		tc.select(QTextCursor::WordUnderCursor);
 		
+		mark(tc, tc.selectionStart(), tc.selectionEnd(), _right);
+		_marked = false;
 		tc.insertText(act->text());
 	}
 }
@@ -81,11 +87,11 @@ void TextEdit::checkSpell() {
 	int end = toPlainText().indexOf(_sep, select_end);
 	if(end == -1) end = toPlainText().size();
 	else {
-		end = toPlainText().lastIndexOf(_sep, end+1);
+		end = toPlainText().indexOf(_sep, end+1);
 		if(end == -1) end = toPlainText().size();
 	}
 	
-	process(start, end, select_end);
+	process(start, end, select_end+1);
 	
 	_txt = this->toPlainText();
 	_marked = false;
@@ -107,10 +113,10 @@ void TextEdit::process(int start, int end, int cur_pos) {
 	
 	const QString sub = this->toPlainText().mid(start, end - start);
 	QStringList l = sub.split(_sep);
-//	d.silent("word list:");
+//	d.silent("cur_pos:" + QString::number(cur_pos));
 	for(int n = 0, i = start; n < l.size(); n++)
 	{
-//		d.silent(l[n]);
+	//	d.silent(l[n]);
 		i = this->toPlainText().indexOf(l[n], i);
 		const int wordEnd  = i + l[n].size();
 		
@@ -124,7 +130,7 @@ void TextEdit::process(int start, int end, int cur_pos) {
 		if(!_sc.spell(l[n]))
 		{
 			mark(this->textCursor(), i, wordEnd, _wrong);
-		}// else d.silent(l[n] + " is right");
+}//		} else d.silent(l[n] + " is right");
 		
 		i = wordEnd;
 	}
