@@ -105,6 +105,9 @@ protected:
 private:
 	static void jsEncode(QString&);
 	static void htmlDecode(QString&);
+	static void htmlEncode(QString&);
+	static void wrap(QWebElement&, QString selector, QString, QString, bool newline = false);
+	static void prefix(QWebElement&, QString selector, QString);
 	static void processMsg(QString&);
 	
 	QWebView* m_htmlView;

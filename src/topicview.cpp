@@ -58,6 +58,11 @@ bool TopicView::refresh(posts* batch) {
 }
 
 bool TopicView::addPost(posts* batch, post p) {
+	QStringList bl = Config().get("blacklist").toStringList();
+	for(int i(0); i < bl.count(); ++i)
+		if(p.nick.toLower() == bl.at(i))
+			return false;
+	
 	bool newPost(true);
 	for(int i(0); i < m_idList.count(); ++i)
 	{
@@ -309,6 +314,17 @@ void TopicView::htmlDecode(QString& str) {
 	str.replace("&reg;", "®");
 	str.replace("&apos;", "'");
 }
+void TopicView::htmlEncode(QString& str) {
+	str.replace("&", "&amp;");
+    str.replace("<", "&lt;");
+    str.replace(">", "&gt;");
+    str.replace(" ", "&nbsp;");
+    str.replace("©", "&copy;");
+    str.replace("\"", "&quot;");
+    str.replace("®", "&reg;");
+    str.replace("'", "&apos;");
+}
+/*
 void TopicView::htmlToMarkDown(QString &str) {
 	while(-1 != str.indexOf("<img"))
 	{
@@ -463,6 +479,83 @@ void TopicView::htmlToMarkDown(QString &str) {
 	str.replace("\n ", "\n");
 	htmlDecode(str);
 }
+*/
+
+void TopicView::htmlToMarkDown(QString& str) {
+	while(-1 != str.indexOf("<img"))
+	{
+		int beg = str.indexOf("alt=\"") + strlen("alt=\"");
+		int end = str.indexOf("\"", beg);
+		QString alt = str.left(end).right(end-beg);
+		
+		beg = str.lastIndexOf("<", beg);
+		end = str.indexOf(">", beg) + 1;
+		QString toRep = str.left(end).right(end-beg);
+		
+		str.replace(toRep, alt);
+	}
+	
+	while(-1 != str.indexOf("<a"))
+	{
+		int beg = str.indexOf("href=\"") + strlen("href=\"");
+		int end = str.indexOf("\"", beg);
+		QString href = str.left(end).right(end-beg);
+		
+		beg = str.lastIndexOf("<", beg);
+		end = str.indexOf("</a>", beg) + strlen("</a>");
+		QString toRep = str.left(end).right(end-beg);
+		
+		str.replace(toRep, href);
+	}
+	
+	processMsg(str);
+	
+	QWebPage p; p.mainFrame()->setHtml(str);
+	QWebElement doc = p.mainFrame()->documentElement();
+	
+	wrap(doc, ".pre-jv", "<code>", "</code>", true);
+	wrap(doc, ".code-jv", "<code>", "</code>");
+	wrap(doc, "strong", "'''", "'''");
+	wrap(doc, "em", "''", "''");
+	wrap(doc, "u", "<u>", "</u>");
+	wrap(doc, "s", "<s>", "</s>");
+	prefix(doc, ".blockquote-jv", ">");
+	
+	//Lists
+	wrap(doc, "ol", "", "", true);
+	wrap(doc, "ul", "", "", true);
+	wrap(doc, "ol > li", "# ", "");
+	wrap(doc, "ul > li", "* ", "");
+	
+	//Spoilers
+	QWebElementCollection els = doc.findAll(".barre-head");
+	for(int i(0); i < els.count(); ++i) els[i].setInnerXml("");
+	wrap(doc, ".contenu-spoil", "<spoil>", "</spoil>", true);
+	
+	str = doc.findFirst("body").toPlainText();
+}
+
+void TopicView::wrap(QWebElement& doc, QString s, QString a, QString b, bool nl) {
+	htmlEncode(a); htmlEncode(b);
+	QWebElementCollection els = doc.findAll(s);
+	if(nl) b += "<br>";
+	for(int i(0); i < els.count(); ++i)
+		els[i].setInnerXml(a + els.at(i).toInnerXml() + b);
+}
+
+void TopicView::prefix(QWebElement& doc, QString s, QString pre) {
+	htmlEncode(pre);
+	QWebElementCollection els = doc.findAll(s);
+	for(int i(0); i < els.count(); ++i) {
+		QWebElementCollection br = els.at(i).findAll("br");
+		for(int j(0); j < br.count(); ++j)
+			br[j].setOuterXml("<br>" + pre);
+		
+		QWebElementCollection p = els.at(i).findAll("p");
+		for(int j(0); j < p.count(); ++j)
+			p[j].prependInside(pre + " ");
+	}
+}
 
 void TopicView::processMsg(QString& msg) {
 	
@@ -522,8 +615,6 @@ void TopicView::processMsg(QString& msg) {
 	for(int i(0); i < toReplace.count(); i++) {
 		msg.replace(toReplace[i].first, 
 		"<a href=\"" + toReplace[i].second + "\">" + toReplace[i].first + "</a>");
-//		d.silent("Txt: " + toReplace[i].first);
-//		d.silent("Url: " + toReplace[i].second);
 	}
 }
 

@@ -85,6 +85,7 @@ public:
 	void getVersion(); //GET request to angiva.re
 	void update(); //GET request to angiva.re
 	void heartBeat(); //GET request to angiva.re
+	void blacklist(); //GET request to angiva.re
 	
 	bool connected(QString);
 	bool isConnected();
@@ -111,6 +112,8 @@ private slots:
 	
 	void update1(int, Response*); //Save to file, shutdown & exec interverting script
 	
+	void blacklist1(int, Response*); //Parse blacklist & save to file
+	
 	void connect1(int, Response*); //GET request to get tk
 	void connect2(int, Response*); //Wait (to not get busted as bot)
 	void connect3(int, Response*); //Parse tk then send connection request
@@ -131,8 +134,8 @@ private slots:
 	void editMsg1(int, Response*); //Wait
 	void editMsg2(int, Response*); //Req to get edit tk
 	void editMsg3(int, Response*); //Parse tk then send msg
-	void editMsg4(int, Response*); //Wait
-	void editMsg5(int, Response*); //Verify server response
+	void editMsg4(int, Response*); //Verify server response
+	void editMsgCaptcha(int, Response*);
 	
 	void getMsg1(int, Response*);  //Parse topic & get link to last page, GET it
 	void getMsg2(int, Response*);  //Read Response & call getMsg2(QString)

@@ -85,7 +85,7 @@ public slots:
 	void favSave();
 	void favLoad();
 	
-	void on_textPost_textChanged();
+	void on_posted();
 	
 	void getPrevHistory();
 	void getNextHistory();
@@ -112,6 +112,7 @@ private slots:
 	void pollForumsLoop();
 	void pollTopicsLoop();
 	void pollFormsLoop();
+	void pollBlacklistLoop();
 	void createGui();
 	void firstSetup();
 	void addForumView();

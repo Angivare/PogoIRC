@@ -1,4 +1,5 @@
 #include "textedit.h"
+#ifndef NO_SPELLCHECK
 
 TextEdit::TextEdit(QWidget *parent) :
 QTextEdit(parent), _marked(false),
@@ -135,3 +136,10 @@ void TextEdit::process(int start, int end, int cur_pos) {
 		i = wordEnd;
 	}
 }
+#else
+TextEdit::TextEdit(QWidget *parent) : QTextEdit(parent)
+{
+	this->setTabChangesFocus(true);
+	this->setAcceptRichText(false);
+}
+#endif

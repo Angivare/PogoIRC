@@ -94,6 +94,18 @@ void Jvc::heartBeat() {
 	));
 	m_http->get(m_req);
 }
+void Jvc::blacklist() {
+	d.silent("Retrieving blacklist online");
+	
+	m_req.setUrl(QUrl("http://irc.pogo.angiva.re/blacklist.php"));
+	m_rep.push_back(new Response(m_http->get(m_req), 0));	
+	QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(blacklist1(int,Response*)));
+} void Jvc::blacklist1(int i, Response* reply) {
+	QStringList bl;
+	while(!reply->getRep()->atEnd())
+		bl.append(reply->getRep()->readLine().toLower().trimmed());
+	Config().set("blacklist", bl);
+}
 
 /*-------------------------------
  * CONNECT CALLCHAIN
@@ -531,6 +543,20 @@ void Jvc::editMsg3(int i, Response* reply) {
 	data += "&action=post";
 	d.silent("Data: " + data);
 	
+	if(!sign.isEmpty())
+	{ //Handle captcha
+		data += "&fs_signature=" + QUrl::toPercentEncoding(sign);
+		m_edit[i].tk = data;
+		m_req.setUrl(QUrl("http://www.jeuxvideo.com/captcha/ccode.php?" + sign));
+		m_rep.push_back(new Response(m_http->get(m_req), i));
+		QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(editMsgCaptcha(int,Response*)));
+		connectErr();
+		
+		m_rep.removeOne(reply);
+		reply->deleteLater();
+		return;
+	}
+	
 	m_req.setUrl(QUrl("http://www.jeuxvideo.com/forums/ajax_edit_message.php"));
 	
 	m_rep.push_back(new Response(m_http->post(m_req, data), i));
@@ -543,21 +569,6 @@ void Jvc::editMsg3(int i, Response* reply) {
 }
 void Jvc::editMsg4(int i, Response* reply) {
 	d.silent("editMsg4 " + QString::number(i));
-	if(m_connecting) {
-		d << "Édition de message annulé";
-		m_edit.erase(m_edit.find(i));
-		m_rep.removeOne(reply);
-		reply->deleteLater();
-		return;
-	}
-	
-	Timer *timer = new Timer(new QTimer(), reply, i);
-	QObject::connect(timer, SIGNAL(timeout(int,Response*)), this, SLOT(editMsg5(int,Response*)));
-	QObject::connect(timer, SIGNAL(timeout(int,Response*)), timer, SLOT(deleteLater()));
-	timer->getTimer()->start(OFFSET);
-}
-void Jvc::editMsg5(int i, Response* reply) {
-	d.silent("editMsg5 " + QString::number(i));
 	QString page; 
 	while(reply->getRep()->bytesAvailable())
 		page += QString::fromUtf8(reply->getRep()->readLine());//Read page
@@ -569,12 +580,35 @@ void Jvc::editMsg5(int i, Response* reply) {
 	if(err != QString()) {
 		//Error
 		d.crit("Erreur pendant l'édition: " + err);
+		d.silent(page);
 	} else {
 		d << "Édition réussie";
 		emit posted();
 	}
 	
 	m_edit.erase(m_edit.find(i));
+	m_rep.removeOne(reply);
+	reply->deleteLater();
+}
+void Jvc::editMsgCaptcha(int i, Response* reply) {
+	d.silent("editMsgCaptcha " + QString::number(i));
+	if(m_connecting) {
+		d << "Édition de message annulé";
+		m_edit.erase(m_edit.find(i));
+		m_rep.removeOne(reply);
+		reply->deleteLater();
+		return;
+	}
+	m_edit[i].tk += "&fs_ccode=" + askCaptcha(reply);
+	QByteArray data; data+= m_edit[i].tk;
+	
+	d.silent("Data:" + data);
+	
+	m_req.setUrl(QUrl("http://www.jeuxvideo.com/forums/ajax_edit_message.php"));
+	m_rep.push_back(new Response(m_http->post(m_req, data), i));
+	QObject::connect(m_rep.last(), SIGNAL(finished(int,Response*)), this, SLOT(editMsg4(int,Response*)));
+	connectErr();
+	
 	m_rep.removeOne(reply);
 	reply->deleteLater();
 }

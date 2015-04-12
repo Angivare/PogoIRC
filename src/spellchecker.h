@@ -1,6 +1,8 @@
 #ifndef SPELLCHECKER_H
 #define SPELLCHECKER_H
 
+#ifndef NO_SPELLCHECK
+
 #include "dbg.h"
 
 #include "hunspell/hunspell.hxx"
@@ -29,5 +31,6 @@ private:
 	QString m_encoding;
 	QTextCodec* m_codec;
 };
+#endif
 
 #endif // SPELLCHECKER_H

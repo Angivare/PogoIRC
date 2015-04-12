@@ -34,12 +34,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	//Jvc handle managing
 	m_jv = new Jvc();
 	connect(m_jv, SIGNAL(posted()), m_textPost, SLOT(clear()));
+	connect(m_jv, SIGNAL(posted()), this, SLOT(on_posted()));
 	connect(m_jv, SIGNAL(posted()), this, SLOT(pollTopics()));
 	connect(m_jv, SIGNAL(connected()), this, SLOT(pollForms()));
 	connect(m_jv, SIGNAL(newMsg()), this, SLOT(newMsg()));
 	connect(m_jv, SIGNAL(setStatusRequest(QString)), this, SLOT(setStatus(QString)));
 	m_jv->getVersion();
 	heartBeat();
+	pollBlacklistLoop();
 	pollTopicsLoop();
 	pollForumsLoop();
 	pollFormsLoop();
@@ -197,6 +199,8 @@ void MainWindow::firstSetup()
 	}
 	if(!c.get("topics/topicViewCount", 0).toInt())
 		on_actionNewTopicView_triggered();
+	
+	c.set("firstLaunch", false);
 }
 
 /* -------------------------------
@@ -405,16 +409,12 @@ void MainWindow::favLoad() {
 	addTopicView(str);
 }
 
-void MainWindow::on_textPost_textChanged() {
-	if(m_textPost->toPlainText() == QString()) {
-		//Then text has been cleared by the user
-		//Tell all the topic views that it's no more in edit mode
-		for(int i(0); i < m_topicViewList.count(); ++i)
-			(*m_topicViewList[i])->putFirstHistory();
-		m_textPost->setProperty("class", "not-editing");
-		style()->unpolish(m_textPost);
-		style()->polish(m_textPost);
-	}
+void MainWindow::on_posted() {
+	for(int i(0); i < m_topicViewList.count(); ++i)
+		(*m_topicViewList[i])->putFirstHistory();
+	m_textPost->setProperty("class", "not-editing");
+	style()->unpolish(m_textPost);
+	style()->polish(m_textPost);
 }
 
 void MainWindow::getPrevHistory() {
@@ -528,6 +528,7 @@ void MainWindow::pollFormsLoop() {
 	pollForms();
 	QTimer::singleShot(1200000, this, SLOT(pollFormsLoop()));
 }
+void MainWindow::pollBlacklistLoop() { m_jv->blacklist(); }
 
 void MainWindow::closeCurrTopicView() { closeTopicView(TopicView::getFocusIndex()); }
 void MainWindow::closeTopicView(int i) {

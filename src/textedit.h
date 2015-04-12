@@ -17,6 +17,7 @@ struct PrevCurr {
 	bool hasSelection;
 };
 
+#ifndef NO_SPELLCHECK
 class TextEdit : public QTextEdit
 {
 	Q_OBJECT
@@ -45,5 +46,11 @@ private:
 	
 	const QRegExp _sep;
 };
+#else
+class TextEdit : public QTextEdit
+{ Q_OBJECT
+	public: explicit TextEdit(QWidget* parent = 0);	
+};
+#endif
 
 #endif // TEXTEDIT_H

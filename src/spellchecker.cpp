@@ -1,4 +1,5 @@
 #include "spellchecker.h"
+#ifndef NO_SPELLCHECK
 
 SpellChecker::SpellChecker()
 {
@@ -60,3 +61,5 @@ const char* SpellChecker::c_string(const QString& word) {
 void SpellChecker::put_word(const QString& word) {
 	m_hunspell->add(c_string(word));
 }
+
+#endif
