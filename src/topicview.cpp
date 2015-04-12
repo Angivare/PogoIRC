@@ -510,6 +510,8 @@ void TopicView::htmlToMarkDown(QString& str) {
 	
 	QWebPage p; p.mainFrame()->setHtml(str);
 	QWebElement doc = p.mainFrame()->documentElement();
+	QWebElementCollection els;
+	
 	
 	wrap(doc, ".pre-jv", "<code>", "</code>", true);
 	wrap(doc, ".code-jv", "<code>", "</code>");
@@ -517,7 +519,18 @@ void TopicView::htmlToMarkDown(QString& str) {
 	wrap(doc, "em", "''", "''");
 	wrap(doc, "u", "<u>", "</u>");
 	wrap(doc, "s", "<s>", "</s>");
-	prefix(doc, ".blockquote-jv", ">");
+	
+	//Quotes
+	prefix(doc, ".blockquote-jv", "> ");
+	const QString pre("&gt; ");
+	els = doc.findAll(".blockquote-jv > p");
+	for(int i(0); i < els.count(); ++i) {
+		int j = els.at(i).attribute("depth", "0").toInt();
+		els[i].setOuterXml(
+			els.at(i).toInnerXml()
+			+ "<br>" + pre.repeated(j) + "<br>"
+		);
+	}
 	
 	//Lists
 	wrap(doc, "ol", "", "", true);
@@ -526,11 +539,12 @@ void TopicView::htmlToMarkDown(QString& str) {
 	wrap(doc, "ul > li", "* ", "");
 	
 	//Spoilers
-	QWebElementCollection els = doc.findAll(".barre-head");
+	 els = doc.findAll(".barre-head");
 	for(int i(0); i < els.count(); ++i) els[i].setInnerXml("");
 	wrap(doc, ".contenu-spoil", "<spoil>", "</spoil>", true);
 	
 	str = doc.findFirst("body").toPlainText();
+	d.silent(doc.findFirst("body").toInnerXml());
 }
 
 void TopicView::wrap(QWebElement& doc, QString s, QString a, QString b, bool nl) {
@@ -543,15 +557,20 @@ void TopicView::wrap(QWebElement& doc, QString s, QString a, QString b, bool nl)
 
 void TopicView::prefix(QWebElement& doc, QString s, QString pre) {
 	htmlEncode(pre);
-	QWebElementCollection els = doc.findAll(s);
-	for(int i(0); i < els.count(); ++i) {
-		QWebElementCollection br = els.at(i).findAll("br");
-		for(int j(0); j < br.count(); ++j)
-			br[j].setOuterXml("<br>" + pre);
+	QWebElementCollection q = doc.findAll(s), els;
+	for(int i(0); i < q.count(); ++i) {
+		els = q.at(i).findAll("br");
+		for(int j(0); j < els.count(); ++j)
+			els[j].setOuterXml("<br>" + pre);
 		
-		QWebElementCollection p = els.at(i).findAll("p");
-		for(int j(0); j < p.count(); ++j)
-			p[j].prependInside(pre + " ");
+		els = q.at(i).findAll("p");
+		for(int j(0); j < els.count(); ++j) {
+			els[j].prependInside(pre);
+			els[j].setAttribute(
+				"depth",
+				QString::number(els.at(j).attribute("depth", "0").toInt()+1)
+			);
+		}
 	}
 }
 

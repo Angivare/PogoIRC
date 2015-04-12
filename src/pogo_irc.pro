@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = pogo_irc
 TEMPLATE = app
 
-DEFINES += NO_SPELLCHECK
+#DEFINES += NO_SPELLCHECK
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -45,5 +45,5 @@ RESOURCES += res/resource.qrc
 
 RC_FILE = res/res.rc
 
-LIBS += -L $$_PRO_FILE_PWD_/../lib -llibhunspell
+LIBS += -L $$_PRO_FILE_PWD_/../lib -llibhunspell-1.3
 INCLUDEPATH += $$_PRO_FILE_PWD_/../include
