@@ -508,8 +508,6 @@ void TopicView::htmlToMarkDown(QString& str) {
 		str.replace(toRep, href);
 	}
 	
-	processMsg(str);
-	
 	QWebPage p; p.mainFrame()->setHtml(str);
 	QWebElement doc = p.mainFrame()->documentElement();
 	
@@ -558,64 +556,32 @@ void TopicView::prefix(QWebElement& doc, QString s, QString pre) {
 }
 
 void TopicView::processMsg(QString& msg) {
+	QWebPage p; p.mainFrame()->setHtml(msg);
+	QWebElement doc = p.mainFrame()->documentElement();
+	QWebElementCollection jvcare = doc.findAll(".JvCare");
 	
-	QList< QPair<QString,QString> > toReplace;
-	int n(0);
+	const QString b("0A12B34C56D78E9F");
 	
-	while(-1 != (n = msg.indexOf("<span class=\"JvCare", n)))
-	{
-		n++;
-		const int next(msg.indexOf(">", n));
-		
-		//Long links
-		int i = msg.indexOf(" rel=\"nofollow\" target=\"_blank\" title=\"", n);
-		if((i != -1) && (i < next || -1 == next))
-		{
-			int beg = msg.indexOf("title=\"", n) + strlen("title=\"");
-			int end = msg.indexOf("\">", beg);
-			const QString url = msg.left(end).right(end-beg);
-			beg = msg.lastIndexOf("<span class=\"JvCare", beg);
-			
-			int j(beg), stack(0);
-			while(stack >= 0)
-			{
-				int open = msg.indexOf("<span>", j)+1;
-				int clos = msg.indexOf("</span>", j)+1;
-				if(open < clos && open != 0) {
-					stack++;
-					j = open;
-				} else {
-					stack--;
-					j = clos;
-				}
-			} j--;
-			
-			end = j;
-			end += strlen("</span>");
-			const QString txt = msg.left(end).right(end-beg);
-			toReplace.push_back(QPair<QString,QString>(txt, url));
+	for(int i(0); i < jvcare.count(); ++i) {
+		if(jvcare.at(i).classes().count() < 1) {
+			d << "Erreur jvcare";
+			continue;
 		}
-		
-		//Short links
-		i = msg.indexOf(" rel=\"nofollow\" target=\"_blank\">", n);
-		if((i != -1) && (i < next || -1 == next))
-		{
-			int beg = msg.indexOf(">", i)+1;
-			int end = msg.indexOf("</span>", beg);
-			const QString url = msg.left(end).right(end-beg);
-			beg = msg.lastIndexOf("<span class=\"JvCare", beg);
-			end = end + strlen("</span>");
-			const QString txt = msg.left(end).right(end-beg);
-			
-			toReplace.push_back(QPair<QString,QString>(txt, url));
+		const QString s(jvcare.at(i).classes().at(1));
+		QString u;
+		for(int j(0); j < s.count(); j+=2) {
+			const int ch(b.indexOf(s.at(j)));
+			const int cl(b.indexOf(s.at(j+1)));
+			u += char(ch*16+cl);
 		}
-		
+		jvcare[i].setOuterXml(
+			"<a href=\"" + u + "\">"
+			+ u
+			+ "</a>"
+		);
 	}
 	
-	for(int i(0); i < toReplace.count(); i++) {
-		msg.replace(toReplace[i].first, 
-		"<a href=\"" + toReplace[i].second + "\">" + toReplace[i].first + "</a>");
-	}
+	msg = doc.findFirst("body").toInnerXml();
 }
 
 bool TopicView::isTopic(const QString& str) {
