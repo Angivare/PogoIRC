@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	//Jvc handle managing
 	m_jv = new Jvc();
 	connect(m_jv, SIGNAL(posted()), m_textPost, SLOT(clear()));
-	connect(m_jv, SIGNAL(posted()), this, SLOT(on_posted()));
+	connect(m_textPost, SIGNAL(textChanged()), this, SLOT(on_textPost_textChanged()));
 	connect(m_jv, SIGNAL(posted()), this, SLOT(pollTopics()));
 	connect(m_jv, SIGNAL(connected()), this, SLOT(pollForms()));
 	connect(m_jv, SIGNAL(newMsg()), this, SLOT(newMsg()));
@@ -409,12 +409,14 @@ void MainWindow::favLoad() {
 	addTopicView(str);
 }
 
-void MainWindow::on_posted() {
-	for(int i(0); i < m_topicViewList.count(); ++i)
-		(*m_topicViewList[i])->putFirstHistory();
-	m_textPost->setProperty("class", "not-editing");
-	style()->unpolish(m_textPost);
-	style()->polish(m_textPost);
+void MainWindow::on_textPost_textChanged() {
+	if(m_textPost->toPlainText().isEmpty()) {
+		for(int i(0); i < m_topicViewList.count(); ++i)
+			(*m_topicViewList[i])->putFirstHistory();
+		m_textPost->setProperty("class", "not-editing");
+		style()->unpolish(m_textPost);
+		style()->polish(m_textPost);
+	}
 }
 
 void MainWindow::getPrevHistory() {
@@ -612,7 +614,7 @@ void MainWindow::resizeHackFinish() {
 	setGeometry(geom);
 }
 void MainWindow::quote(QString& str) {
-	TopicView::htmlToMarkDown(str);
+//	TopicView::htmlToMarkDown(str);
 	
 	str.prepend(">");
 	str.replace("\n", "\n>");

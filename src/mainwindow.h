@@ -85,7 +85,7 @@ public slots:
 	void favSave();
 	void favLoad();
 	
-	void on_posted();
+	void on_textPost_textChanged();
 	
 	void getPrevHistory();
 	void getNextHistory();

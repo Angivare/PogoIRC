@@ -127,7 +127,7 @@ bool TopicView::addPost(posts* batch, post p) {
 	}
 	
 	jsEncode(post); jsEncode(p.nick);
-	QString js  = QString("addPost(\"%1\", \"%2\"); null;").arg(post, p.nick);
+	QString js  = QString("addPost(\"%1\", \"%2\", \"%3\"); null;").arg(QString::number(p.id), p.nick, post);
 	m_htmlView->page()->mainFrame()->evaluateJavaScript(js);
 	emit messRequest(this);
 	return p.rank != "self";
@@ -245,6 +245,8 @@ void TopicView::openLink(const QUrl& url) {
 }
 void TopicView::quote(QString& str) {
 	emit quoteReq(str);
+	htmlToMarkDown(str);
+	d.silent(str);
 }
 
 void TopicView::setFocus(bool set) {
@@ -324,227 +326,11 @@ void TopicView::htmlEncode(QString& str) {
     str.replace("®", "&reg;");
     str.replace("'", "&apos;");
 }
-/*
-void TopicView::htmlToMarkDown(QString &str) {
-	while(-1 != str.indexOf("<img"))
-	{
-		int beg = str.indexOf("alt=\"") + strlen("alt=\"");
-		int end = str.indexOf("\"", beg);
-		QString alt = str.left(end).right(end-beg);
-		
-		beg = str.lastIndexOf("<", beg);
-		end = str.indexOf(">", beg) + 1;
-		QString toRep = str.left(end).right(end-beg);
-		
-		str.replace(toRep, alt);
-	}
-	
-	while(-1 != str.indexOf("<a"))
-	{
-		int beg = str.indexOf("href=\"") + strlen("href=\"");
-		int end = str.indexOf("\"", beg);
-		QString href = str.left(end).right(end-beg);
-		
-		beg = str.lastIndexOf("<", beg);
-		end = str.indexOf("</a>", beg) + strlen("</a>");
-		QString toRep = str.left(end).right(end-beg);
-		
-		str.replace(toRep, href);
-	}
-	
-	processMsg(str);
-	
-	str = str.simplified();
-	str.replace("<br>", "\n");
-	str.replace("<br />", "\n");
-	str.replace("<br/>", "\n");
-	str.replace("<p>", "");
-	str.replace("</p>", "\n\n");
-	str.replace(str.lastIndexOf("\n\n"), 3, "");
-	str.replace("<strong>", "'''");
-	str.replace("</strong>", "'''");
-	str.replace("<em>", "''");
-	str.replace("</em>", "''");
-	
-	while(-1 != str.indexOf("<blockquote"))
-	{
-		int beg = str.indexOf("\"blockquote-jv\">") + strlen("\"blockquote-jv\">");
-		int end = str.lastIndexOf("</blockquote>");
-		
-		QString before = str.left(end).right(end-beg);
-		d.silent(before);
-		QString after(before);
-		after.prepend(">");
-		after.replace("\n", "\n>");
-		after.append("\n\n");
-		
-		str.replace(before, after);
-		d.silent(after);
-		
-		end = beg;
-		beg = str.lastIndexOf("<", beg);
-		str.replace(beg, end-beg, "");
-		
-		beg = str.lastIndexOf("</blockquote>");
-		end = beg + strlen("</blockquote>");
-		str.replace(beg, end-beg, "");
-	}
-	
-	while(-1 != str.indexOf("<ul"))
-	{
-		int beg = str.indexOf("\"liste-default-jv\">") + strlen("\"liste-default-jv\">");
-		int end = str.lastIndexOf("</ul>");
-		
-		QString tmp = str.left(end).right(end-beg);
-		while(-1 != tmp.indexOf("<li"))
-		{
-			int b = tmp.indexOf("<li>") + strlen("<li>");
-			int e = tmp.indexOf("</li>");
-			
-			QString before = tmp.left(e).right(e-b);
-			QString after(before);
-			after.prepend("* ");
-			after.append("\n");
-			
-			tmp.replace(before, after);
-			
-			e = b;
-			b = tmp.lastIndexOf("<", b);
-			tmp.replace(b, e-b, "");
-			
-			b = tmp.indexOf("</li>");
-			e = b + strlen("</li>");
-			tmp.replace(b, e-b, "");
-		}
-		d.silent(QString::number(beg) + ";" + QString::number(end));
-		
-		QString before = str.left(end).right(end-beg);
-		tmp.append("\n");
-		
-		str.replace(before, tmp);
-		d.silent(tmp);
-		
-		end = beg;
-		beg = str.lastIndexOf("<", beg);
-		str.replace(beg, end-beg, "");
-		
-		beg = str.lastIndexOf("</ul>");
-		end = beg + strlen("</ul>");
-		str.replace(beg, end-beg, "");
-	}
-	
-	while(-1 != str.indexOf("<ol"))
-	{
-		int beg = str.indexOf("\"liste-default-jv\">") + strlen("\"liste-default-jv\">");
-		int end = str.lastIndexOf("</ol>");
-		
-		QString tmp = str.left(end).right(end-beg);
-		while(-1 != tmp.indexOf("<li"))
-		{
-			int b = tmp.indexOf("<li>") + strlen("<li>");
-			int e = tmp.indexOf("</li>");
-			
-			QString before = tmp.left(e).right(e-b);
-			QString after(before);
-			after.prepend("# ");
-			after.append("\n");
-			
-			tmp.replace(before, after);
-			
-			e = b;
-			b = tmp.lastIndexOf("<", b);
-			tmp.replace(b, e-b, "");
-			
-			b = tmp.indexOf("</li>");
-			e = b + strlen("</li>");
-			tmp.replace(b, e-b, "");
-		}
-		d.silent(QString::number(beg) + ";" + QString::number(end));
-		
-		QString before = str.left(end).right(end-beg);
-		tmp.append("\n");
-		
-		str.replace(before, tmp);
-		d.silent(tmp);
-		
-		end = beg;
-		beg = str.lastIndexOf("<", beg);
-		str.replace(beg, end-beg, "");
-		
-		beg = str.lastIndexOf("</ol>");
-		end = beg + strlen("</ol>");
-		str.replace(beg, end-beg, "");
-	}
-	
-	str.replace("\n ", "\n");
-	htmlDecode(str);
-}
-*/
 
 void TopicView::htmlToMarkDown(QString& str) {
-	while(-1 != str.indexOf("<img"))
-	{
-		int beg = str.indexOf("alt=\"") + strlen("alt=\"");
-		int end = str.indexOf("\"", beg);
-		QString alt = str.left(end).right(end-beg);
-		
-		beg = str.lastIndexOf("<", beg);
-		end = str.indexOf(">", beg) + 1;
-		QString toRep = str.left(end).right(end-beg);
-		
-		str.replace(toRep, alt);
-	}
-	
-	while(-1 != str.indexOf("<a"))
-	{
-		int beg = str.indexOf("href=\"") + strlen("href=\"");
-		int end = str.indexOf("\"", beg);
-		QString href = str.left(end).right(end-beg);
-		
-		beg = str.lastIndexOf("<", beg);
-		end = str.indexOf("</a>", beg) + strlen("</a>");
-		QString toRep = str.left(end).right(end-beg);
-		
-		str.replace(toRep, href);
-	}
-	
-	QWebPage p; p.mainFrame()->setHtml(str);
-	QWebElement doc = p.mainFrame()->documentElement();
-	QWebElementCollection els;
-	
-	
-	wrap(doc, ".pre-jv", "<code>", "</code>", true);
-	wrap(doc, ".code-jv", "<code>", "</code>");
-	wrap(doc, "strong", "'''", "'''");
-	wrap(doc, "em", "''", "''");
-	wrap(doc, "u", "<u>", "</u>");
-	wrap(doc, "s", "<s>", "</s>");
-	
-	//Quotes
-	prefix(doc, ".blockquote-jv", "> ");
-	const QString pre("&gt; ");
-	els = doc.findAll(".blockquote-jv > p");
-	for(int i(0); i < els.count(); ++i) {
-		int j = els.at(i).attribute("depth", "0").toInt();
-		els[i].setOuterXml(
-			els.at(i).toInnerXml()
-			+ "<br>" + pre.repeated(j) + "<br>"
-		);
-	}
-	
-	//Lists
-	wrap(doc, "ol", "", "", true);
-	wrap(doc, "ul", "", "", true);
-	wrap(doc, "ol > li", "# ", "");
-	wrap(doc, "ul > li", "* ", "");
-	
-	//Spoilers
-	 els = doc.findAll(".barre-head");
-	for(int i(0); i < els.count(); ++i) els[i].setInnerXml("");
-	wrap(doc, ".contenu-spoil", "<spoil>", "</spoil>", true);
-	
-	str = doc.findFirst("body").toPlainText();
-	d.silent(doc.findFirst("body").toInnerXml());
+	jsEncode(str);
+	d.silent(str);
+	str = m_htmlView->page()->mainFrame()->evaluateJavaScript(QString("JVCode.toJVCode(\"%1\")").arg(str)).toString();
 }
 
 void TopicView::wrap(QWebElement& doc, QString s, QString a, QString b, bool nl) {

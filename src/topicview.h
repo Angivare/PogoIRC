@@ -74,7 +74,7 @@ public:
 	static int getFocusIndex();
 	QWebView* getView();
 	
-	static void htmlToMarkDown(QString& str);
+	void htmlToMarkDown(QString& str);
 	
 	static bool isTopic(const QString&);
 	static bool isForum(const QString&);

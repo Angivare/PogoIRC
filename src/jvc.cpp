@@ -841,6 +841,11 @@ void Jvc::processMsg(QString& msg) {
 
 void Jvc::parseHighDensity(const QString& page, posts *params) {
 	Parser parser(page);
+	parser.jumpTo("<link rel=\"alternate\"");
+	params->type = parser.get("/forums/", "-").toInt();
+	params->forum = parser.get("-", "-").toInt();
+	params->topic = parser.get("-", "-").toInt();
+	params->page = parser.get("-", "-").toInt();
 	parser.jumpTo("<div class=\"bloc-nb-mp\"");
 	if(parser.find("<span class=\"sup\">") < parser.find("</a>"))
 	{	//New MPs found
@@ -883,17 +888,12 @@ void Jvc::parseHighDensity(const QString& page, posts *params) {
 			parser.jumpTo("<div class=\"info-edition-msg\">");
 			p.editDate = parser.get(" le ", " à");
 			p.editTime = parser.get("à", "par");
-			p.editNick = parser.get(" target=\"_blank\">", "</a>");
+			p.editNick = parser.get(" target=\"_blank\">", "</span>");
 		} else p.edited = "not-edited";
 		params->p.push_back(p);
 	}
 	parser.jumpTo("<div id=\"forum-right-col\"");
 	params->connected = parser.get("<span class=\"nb-connect-fofo\">", " connecté(s)</span>").toInt();
-	parser.jumpTo("&jv_page_url=%2Fforums%2F");
-	params->type = parser.get("", "-").toInt();
-	params->forum = parser.get("-", "-").toInt();
-	params->topic = parser.get("-", "-").toInt();
-	params->page = parser.get("-", "-").toInt();
 	
 	if(!params->p.size()) {
 		d.silent(page);
