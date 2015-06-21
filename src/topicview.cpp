@@ -233,14 +233,15 @@ void TopicView::openLink(const QUrl& url) {
 	if(curr == "about:blank")
 		if(!QDesktopServices::openUrl(url))
 		{
-			#ifdef Q_OS_WIN32
-				QString str = url.toString();
-				wchar_t url[str.size()+1];
-				str.toWCharArray(url);
-				url[str.size()] = '\0';
-				if(32 > (int)ShellExecute(NULL, L"open", url, NULL, NULL, SW_SHOWNORMAL))
-					QApplication::beep();
-			#endif
+			QString str = " \"" + url.toString() + '"';
+#ifdef Q_OS_WIN32
+			QString cmd = "explorer";
+#elif defined(Q_OS_LINUX)
+			QString cmd = "xdg-open";
+#elif defined(Q_OS_MAC)
+			QString cmd = "open";
+#endif
+			system((cmd + str).toLocal8Bit().data());
 		}
 }
 void TopicView::quote(QString& str) {
